@@ -201,6 +201,7 @@ angular.module('pocPouchApp')
       .then(listEST)
       .then(generateGYBEDocURIs)
       .then(insertGYBE)
+      .then(growlBands)
       .then(getGYBE)
       .then(listGYBE)
       .catch(growlError);
