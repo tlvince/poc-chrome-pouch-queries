@@ -1,0 +1,20 @@
+{
+  "name": "Chrome-Pouch queries POC",
+  "description": "Proof-of-concept app to test Pouch queries in Chrome apps",
+  "version": "0.3.0",
+  "manifest_version": 2,
+  "permissions": [
+    "storage"
+  ],
+  "icons": {
+    "16": "images/icon-16.png"
+  },
+  "app": {
+    "background": {
+      "scripts": [
+        "main.js",
+        "chromereload.js"
+      ]
+    }
+  }
+}
