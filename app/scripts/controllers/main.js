@@ -45,7 +45,7 @@ angular.module('pocPouchApp')
     };
 
     var growlBands = function(result) {
-      return growl.info('Inserted ' + result.length + ' bands');
+      return growl.info('Inserted ' + result.length + ' band members');
     };
 
     var growlError = function(reason) {
@@ -61,14 +61,49 @@ angular.module('pocPouchApp')
       return db.query(map);
     };
 
-    var listBeatles = function(docs) {
+    var listMembers = function(docs, band) {
       // jshint camelcase: false
-      growl.info('Found ' + docs.total_rows + ' beatles');
+      growl.info('Found ' + docs.total_rows + ' ' + band);
       $scope.$apply(function() {
-        $scope.beatles = docs.rows.map(function(row) {
+        $scope[band] = docs.rows.map(function(row) {
           return row.key;
         });
       });
+    };
+
+    var listBeatles = function(docs) {
+      return listMembers(docs, 'beatles');
+    };
+
+    var listNirvana = function(docs) {
+      return listMembers(docs, 'nirvana');
+    };
+
+    var setNirvanaView = function() {
+      var nirvanaView = {
+        _id: '_design/nirvana',
+        views: {
+          nirvana: {
+            map: function(doc) {
+              if (doc.doctype === 'nirvana') {
+                emit(doc.name, 1);
+              }
+            }.toString()
+          }
+        }
+      };
+
+      return db.put(nirvanaView);
+    };
+
+    var initNirvanaView = function() {
+      return db.query('nirvana', {
+        stale: 'update_after'
+      });
+    };
+
+    var getNirvana = function() {
+      return db.query('nirvana');
     };
 
     initDB()
@@ -76,5 +111,9 @@ angular.module('pocPouchApp')
       .then(growlBands)
       .then(getBeatles)
       .then(listBeatles)
+      .then(setNirvanaView)
+      .then(initNirvanaView)
+      .then(getNirvana)
+      .then(listNirvana)
       .catch(growlError);
   });
