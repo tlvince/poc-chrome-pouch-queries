@@ -47,6 +47,17 @@ angular.module('pocPouchApp')
       }
     ];
 
+    var sigur = [
+      {
+        name: 'Jón',
+        doctype: 'sigur'
+      },
+      {
+        name: 'Orri',
+        doctype: 'sigur'
+      }
+    ];
+
     var db = 'bands';
     var initDB = function() {
       return $window.PouchDB.destroy('bands')
@@ -173,17 +184,45 @@ angular.module('pocPouchApp')
       return db.bulkDocs(gybe);
     };
 
-    var getGYBE = function() {
+    var getAllDocsByRange = function(key) {
       return db.allDocs({
         // jshint camelcase: false
         include_docs: true,
-        startkey: 'bands/gybe',
-        endkey: 'bands/gybe_'
+        startkey: key,
+        endkey: key + '_'
       });
+    };
+
+    var getGYBE = function() {
+      return getAllDocsByRange('bands/gybe');
     };
 
     var listGYBE = function(docs) {
       return listMembers(docs, 'gybe', 'doc');
+    };
+
+    var generateSigurCollateIDs = function() {
+      sigur = sigur.map(function(s) {
+        s._id = $window.pouchCollate.toIndexableString([
+          'bands', s.doctype, s.name
+        ]);
+        return s;
+      });
+    };
+
+    var insertSigur = function() {
+      return db.bulkDocs(sigur);
+    };
+
+    var getSigur = function() {
+      var key = $window.pouchCollate.toIndexableString([
+        'bands', 'sigur'
+      ]);
+      return getAllDocsByRange(key);
+    };
+
+    var listSigur = function(docs) {
+      return listMembers(docs, 'sigur', 'doc');
     };
 
     initDB()
@@ -204,5 +243,10 @@ angular.module('pocPouchApp')
       .then(growlBands)
       .then(getGYBE)
       .then(listGYBE)
+      .then(generateSigurCollateIDs)
+      .then(insertSigur)
+      .then(growlBands)
+      .then(getSigur)
+      .then(listSigur)
       .catch(growlError);
   });
