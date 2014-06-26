@@ -8,7 +8,8 @@
     "bootstrap": "~3.1.1",
     "pouchdb": "~2.2.3",
     "angular-growl-v2": "~0.6.1",
-    "pouchdb.mapreduce.noeval": "tlvince/pouchdb.mapreduce.noeval#refactor/force-noeval"
+    "pouchdb.mapreduce.noeval": "tlvince/pouchdb.mapreduce.noeval#refactor/force-noeval",
+    "docuri@latest": "http://www.modulefarm.com/standalone/docuri@latest"
   },
   "devDependencies": {
     "angular-mocks": "1.2.16",

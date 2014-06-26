@@ -36,6 +36,17 @@ angular.module('pocPouchApp')
       }
     ];
 
+    var gybe = [
+      {
+        name: 'Efrim',
+        doctype: 'gybe'
+      },
+      {
+        name: 'Mike',
+        doctype: 'gybe'
+      }
+    ];
+
     var db = 'bands';
     var initDB = function() {
       return $window.PouchDB.destroy('bands')
@@ -149,6 +160,32 @@ angular.module('pocPouchApp')
       return listMembers(docs, 'est', 'value');
     };
 
+    var generateGYBEDocURIs = function() {
+      $window.docuri.route('bands/:doctype/:name', 'bands');
+
+      gybe = gybe.map(function(g) {
+        g._id = $window.docuri.bands(g);
+        return g;
+      });
+    };
+
+    var insertGYBE = function() {
+      return db.bulkDocs(gybe);
+    };
+
+    var getGYBE = function() {
+      return db.allDocs({
+        // jshint camelcase: false
+        include_docs: true,
+        startkey: 'bands/gybe',
+        endkey: 'bands/gybe_'
+      });
+    };
+
+    var listGYBE = function(docs) {
+      return listMembers(docs, 'gybe', 'doc');
+    };
+
     initDB()
       .then(insertBands)
       .then(growlBands)
@@ -162,5 +199,9 @@ angular.module('pocPouchApp')
       .then(initESTView)
       .then(getEST)
       .then(listEST)
+      .then(generateGYBEDocURIs)
+      .then(insertGYBE)
+      .then(getGYBE)
+      .then(listGYBE)
       .catch(growlError);
   });
