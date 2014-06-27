@@ -11,4 +11,8 @@
 angular
   .module('pocPouchApp', [
     'angular-growl'
-  ]);
+  ])
+
+  .config(function(growlProvider) {
+    growlProvider.onlyUniqueMessages(false);
+  });
